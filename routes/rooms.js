@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   getRooms,
   getAvailableRooms,
+  getRoomAvailabilityStats,
   getRoom,
   createRoom,
   updateRoom,
@@ -15,6 +16,7 @@ const { protect, authorize } = require('../middleware/auth');
 router.use(protect);
 
 router.get('/available', getAvailableRooms);
+router.get('/availability-stats', getRoomAvailabilityStats);
 
 router
   .route('/')

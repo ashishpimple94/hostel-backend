@@ -45,6 +45,77 @@ exports.getAvailableRooms = async (req, res) => {
   }
 };
 
+// @desc    Get room availability statistics
+// @route   GET /api/rooms/availability-stats
+// @access  Private
+exports.getRoomAvailabilityStats = async (req, res) => {
+  try {
+    const rooms = await Room.find({ status: { $ne: 'maintenance' } }).populate('students', 'firstName lastName studentId');
+
+    // Organize by AC/Non-AC and sharing type
+    const stats = {
+      nonAC: {
+        fourSharing: { total: 0, occupied: 0, available: 0, beds: [] },
+        twoSharing: { total: 0, occupied: 0, available: 0, beds: [] },
+        oneSharing: { total: 0, occupied: 0, available: 0, beds: [] }
+      },
+      AC: {
+        fourSharing: { total: 0, occupied: 0, available: 0, beds: [] },
+        twoSharing: { total: 0, occupied: 0, available: 0, beds: [] },
+        oneSharing: { total: 0, occupied: 0, available: 0, beds: [] }
+      }
+    };
+
+    rooms.forEach(room => {
+      const section = room.isAC ? 'AC' : 'nonAC';
+      let sharingType;
+
+      switch(room.type) {
+        case 'quadruple':
+          sharingType = 'fourSharing';
+          break;
+        case 'double':
+          sharingType = 'twoSharing';
+          break;
+        case 'single':
+          sharingType = 'oneSharing';
+          break;
+        default:
+          return;
+      }
+
+      const availableBeds = room.capacity - room.occupied;
+      stats[section][sharingType].total += room.capacity;
+      stats[section][sharingType].occupied += room.occupied;
+      stats[section][sharingType].available += availableBeds;
+
+      // Add room details with bed information
+      stats[section][sharingType].beds.push({
+        roomNo: room.roomNo,
+        building: room.building,
+        floor: room.floor,
+        capacity: room.capacity,
+        occupied: room.occupied,
+        available: availableBeds,
+        beds: room.beds || [],
+        students: room.students,
+        rent: room.rent,
+        rentFor5Months: room.rentFor5Months,
+        messChargePerMonth: room.messChargePerMonth || 3000,
+        messChargeFor5Months: room.messChargeFor5Months || 15000,
+        status: room.status
+      });
+    });
+
+    res.status(200).json({
+      success: true,
+      data: stats
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // @desc    Get single room
 // @route   GET /api/rooms/:id
 // @access  Private
@@ -150,9 +221,20 @@ exports.allocateRoom = async (req, res) => {
       });
     }
 
-    // Allocate room
+    // Find first available bed
+    const availableBed = room.beds.find(bed => !bed.isOccupied);
+    if (!availableBed) {
+      return res.status(400).json({
+        success: false,
+        message: 'No available beds in this room'
+      });
+    }
+
+    // Allocate room and bed
     room.students.push(student._id);
     room.occupied += 1;
+    availableBed.isOccupied = true;
+    availableBed.studentId = student._id;
     await room.save();
 
     student.roomNo = room._id;
@@ -191,11 +273,19 @@ exports.deallocateRoom = async (req, res) => {
       });
     }
 
-    // Remove student from room
+    // Remove student from room and free the bed
     room.students = room.students.filter(
       s => s.toString() !== studentId.toString()
     );
     room.occupied -= 1;
+    
+    // Find and free the bed
+    const studentBed = room.beds.find(bed => bed.studentId && bed.studentId.toString() === studentId.toString());
+    if (studentBed) {
+      studentBed.isOccupied = false;
+      studentBed.studentId = null;
+    }
+    
     await room.save();
 
     student.roomNo = null;
