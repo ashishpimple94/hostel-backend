@@ -1,0 +1,300 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║           HOSTEL MANAGEMENT API - POSTMAN ROUTES                     ║
+║           Base URL: https://hostel-backend-7lb7.onrender.com         ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+🔐 AUTHENTICATION
+═══════════════════════════════════════════════════════════════════════
+
+[1] Register User
+    POST /api/auth/register
+    Body: {"name": "Admin", "email": "admin@hostel.com", "password": "admin123", "role": "admin"}
+
+[2] Login User
+    POST /api/auth/login
+    Body: {"email": "admin@hostel.com", "password": "admin123"}
+    Response: {"token": "JWT_TOKEN_HERE"}
+
+[3] Get Current User
+    GET /api/auth/me
+    Headers: Authorization: Bearer YOUR_TOKEN
+
+[4] Update Password
+    PUT /api/auth/updatepassword
+    Headers: Authorization: Bearer YOUR_TOKEN
+    Body: {"currentPassword": "old", "newPassword": "new"}
+
+
+👥 STUDENTS
+═══════════════════════════════════════════════════════════════════════
+
+[5] Get All Students
+    GET /api/students
+    Headers: Authorization: Bearer YOUR_TOKEN
+
+[6] Create Student
+    POST /api/students
+    Headers: Authorization: Bearer YOUR_TOKEN
+    Body: {
+      "name": "John Doe",
+      "email": "john@student.com",
+      "phone": "1234567890",
+      "dob": "2000-01-01",
+      "bloodGroup": "O+",
+      "department": "Computer Science",
+      "course": "BE",
+      "year": 3,
+      "semester": 5,
+      "guardianName": "Father",
+      "guardianPhone": "9876543210",
+      "guardianRelation": "Father"
+    }
+
+[7] Get Student by ID
+    GET /api/students/STUDENT_ID
+    Headers: Authorization: Bearer YOUR_TOKEN
+
+[8] Update Student
+    PUT /api/students/STUDENT_ID
+    Headers: Authorization: Bearer YOUR_TOKEN
+    Body: {"name": "Updated Name"}
+
+[9] Delete Student
+    DELETE /api/students/STUDENT_ID
+    Headers: Authorization: Bearer YOUR_TOKEN
+
+[10] Get Student Ledger
+     GET /api/students/STUDENT_ID/ledger
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+
+🏠 ROOMS
+═══════════════════════════════════════════════════════════════════════
+
+[11] Get All Rooms
+     GET /api/rooms
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[12] Get Available Rooms
+     GET /api/rooms/available
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[13] Get Room Stats
+     GET /api/rooms/availability-stats
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[14] Create Room
+     POST /api/rooms
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {
+       "roomNumber": "101",
+       "floor": 1,
+       "building": "A",
+       "type": "AC",
+       "capacity": 3,
+       "amenities": ["WiFi", "Cooler", "Furniture"]
+     }
+
+[15] Get Room by ID
+     GET /api/rooms/ROOM_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[16] Update Room
+     PUT /api/rooms/ROOM_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {"capacity": 4}
+
+[17] Delete Room
+     DELETE /api/rooms/ROOM_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[18] Allocate Room
+     POST /api/rooms/ROOM_ID/allocate
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {"studentId": "STUDENT_ID"}
+
+[19] Deallocate Room
+     POST /api/rooms/ROOM_ID/deallocate
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {"studentId": "STUDENT_ID"}
+
+
+💰 FEES
+═══════════════════════════════════════════════════════════════════════
+
+[20] Get All Fees
+     GET /api/fees
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[21] Create Fee
+     POST /api/fees
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {
+       "studentId": "STUDENT_ID",
+       "month": "2024-01",
+       "roomRent": 5000,
+       "messCharges": 3000,
+       "fine": 0,
+       "otherCharges": 0
+     }
+
+[22] Get Fee by ID
+     GET /api/fees/FEE_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[23] Update Fee
+     PUT /api/fees/FEE_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {"roomRent": 5500}
+
+[24] Pay Fee
+     PUT /api/fees/FEE_ID/pay
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {"paymentMode": "Cash", "transactionId": "TXN123"}
+
+[25] Get Student Fees
+     GET /api/fees/student/STUDENT_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+
+📋 COMPLAINTS
+═══════════════════════════════════════════════════════════════════════
+
+[26] Get All Complaints
+     GET /api/complaints
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[27] Create Complaint
+     POST /api/complaints
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {
+       "title": "Water Leakage",
+       "description": "Severe water leakage in bathroom",
+       "priority": "high",
+       "category": "plumbing"
+     }
+
+[28] Get Complaint by ID
+     GET /api/complaints/COMPLAINT_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[29] Update Complaint
+     PUT /api/complaints/COMPLAINT_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {"status": "resolved"}
+
+[30] Delete Complaint
+     DELETE /api/complaints/COMPLAINT_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+
+✅ ATTENDANCE
+═══════════════════════════════════════════════════════════════════════
+
+[31] Get All Attendance
+     GET /api/attendance
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[32] Mark Attendance
+     POST /api/attendance
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {
+       "studentId": "STUDENT_ID",
+       "date": "2024-01-15",
+       "status": "present",
+       "remarks": "On time"
+     }
+
+[33] Bulk Mark Attendance
+     POST /api/attendance/bulk
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {
+       "attendance": [
+         {"studentId": "ID1", "status": "present"},
+         {"studentId": "ID2", "status": "absent"}
+       ],
+       "date": "2024-01-15"
+     }
+
+[34] Get Attendance Stats
+     GET /api/attendance/stats
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[35] Get Today's Attendance
+     GET /api/attendance/today
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+
+📢 NOTICES
+═══════════════════════════════════════════════════════════════════════
+
+[36] Get All Notices
+     GET /api/notices
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[37] Create Notice
+     POST /api/notices
+     Headers: Authorization: Bearer YOUR_TOKEN
+     Body: {
+       "title": "Hostel Meeting",
+       "description": "All students must attend",
+       "category": "general",
+       "priority": "high",
+       "targetAudience": "all"
+     }
+
+[38] Get Notice by ID
+     GET /api/notices/NOTICE_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[39] Update Notice
+     PUT /api/notices/NOTICE_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[40] Delete Notice
+     DELETE /api/notices/NOTICE_ID
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+
+📊 DASHBOARD
+═══════════════════════════════════════════════════════════════════════
+
+[41] Get Dashboard Stats
+     GET /api/dashboard/stats
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[42] Get Room Occupancy Report
+     GET /api/dashboard/room-occupancy
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+[43] Get Fee Collection Report
+     GET /api/dashboard/fee-collection
+     Headers: Authorization: Bearer YOUR_TOKEN
+
+
+❤️  HEALTH CHECK
+═══════════════════════════════════════════════════════════════════════
+
+[44] Server Health
+     GET /api/health
+     (No auth required)
+
+
+═══════════════════════════════════════════════════════════════════════
+
+🔑 IMPORTANT NOTES:
+═══════════════════════════════════════════════════════════════════════
+
+1. Get token from /api/auth/login endpoint
+2. Add header: Authorization: Bearer YOUR_TOKEN
+3. Replace ID placeholders with actual IDs
+4. All dates in YYYY-MM-DD format
+5. Content-Type: application/json for POST/PUT
+
+═══════════════════════════════════════════════════════════════════════
+
+📚 For detailed documentation:
+   See: API_ROUTES.md and POSTMAN_QUICK_START.md
+
+═══════════════════════════════════════════════════════════════════════
+
