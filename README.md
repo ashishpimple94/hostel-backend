@@ -123,6 +123,34 @@ backend/
 └── server.js        # Main server file
 ```
 
+## 🧪 API Testing
+
+### Postman Testing
+
+**Live API URL**: `https://hostel-backend-7lb7.onrender.com`
+
+Quick Start:
+1. Test health: `GET /api/health`
+2. Register: `POST /api/auth/register`
+3. Login: `POST /api/auth/login` (save the token)
+4. Use token in header: `Authorization: Bearer YOUR_TOKEN`
+
+📚 **Documentation Files:**
+- [API_ROUTES.md](./API_ROUTES.md) - Complete API documentation with all endpoints
+- [POSTMAN_QUICK_START.md](./POSTMAN_QUICK_START.md) - Quick start guide for Postman
+- [POSTMAN_ROUTES.txt](./POSTMAN_ROUTES.txt) - Formatted routes reference
+
+### Quick Test Commands
+```bash
+# Health Check
+curl https://hostel-backend-7lb7.onrender.com/api/health
+
+# Login
+curl -X POST https://hostel-backend-7lb7.onrender.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@hostel.com","password":"admin123"}'
+```
+
 ## 🌐 Deployment
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
